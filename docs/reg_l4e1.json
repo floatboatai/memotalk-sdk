@@ -1,0 +1,60 @@
+{
+  "counts": {
+    "PASS": 6,
+    "WARN": 1
+  },
+  "results": [
+    {
+      "stage": "L4",
+      "check": "0x87 hotspot on",
+      "status": "PASS",
+      "detail": "state=1",
+      "at": "15:14:25"
+    },
+    {
+      "stage": "L4",
+      "check": "0x0B/0x0C credentials",
+      "status": "PASS",
+      "detail": "ssid='MemoTalk-S1-VfNt' pwd_len=8",
+      "at": "15:14:25"
+    },
+    {
+      "stage": "L4",
+      "check": "0x03-0x06 ftp config",
+      "status": "PASS",
+      "detail": "192.168.4.1:2121 user='fulltech' pwd_len=8 ready=True",
+      "at": "15:14:25"
+    },
+    {
+      "stage": "L4",
+      "check": "0x87 hotspot off",
+      "status": "PASS",
+      "detail": "device released back to BLE recording mode",
+      "at": "15:14:26"
+    },
+    {
+      "stage": "E1",
+      "check": "current sleep timeout",
+      "status": "PASS",
+      "detail": "300s",
+      "at": "15:14:26"
+    },
+    {
+      "stage": "E1",
+      "check": "library frame accepted",
+      "status": "PASS",
+      "detail": "5A06B0002C0157C0 -> result=1",
+      "at": "15:14:26",
+      "evidence": {
+        "frame": "5A06B0002C0157C0"
+      }
+    },
+    {
+      "stage": "E1",
+      "check": "spec frame rejected",
+      "status": "WARN",
+      "detail": "device accepted a wrong-CRC frame: CRC not enforced on 0xB0",
+      "at": "15:14:26"
+    }
+  ]
+}

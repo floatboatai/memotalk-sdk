@@ -1,0 +1,94 @@
+{
+  "counts": {
+    "PASS": 10
+  },
+  "results": [
+    {
+      "stage": "L3",
+      "check": "0x80 start (level mode)",
+      "status": "PASS",
+      "detail": "state=RECORDING file=F525D_20261022151347.mp3",
+      "at": "15:13:49"
+    },
+    {
+      "stage": "L3",
+      "check": "0xA8 level stream",
+      "status": "PASS",
+      "detail": "50 frames, -43.1..-14.0 dB",
+      "at": "15:13:53",
+      "evidence": {
+        "count": 50,
+        "min": -43.056419372558594,
+        "max": -13.978585243225098
+      }
+    },
+    {
+      "stage": "L3",
+      "check": "0x80 start (mp3 mode)",
+      "status": "PASS",
+      "detail": "file=F525D_20261022151353.mp3",
+      "at": "15:13:55"
+    },
+    {
+      "stage": "L3",
+      "check": "0x90 mp3 stream",
+      "status": "PASS",
+      "detail": "42 frames / 12096 bytes, 288B=True, mp3sync=True",
+      "at": "15:13:59",
+      "evidence": {
+        "count": 42,
+        "bytes": 12096,
+        "first_frame": "fff348c40020c0f68c00cbde7039d907"
+      }
+    },
+    {
+      "stage": "L3",
+      "check": "recorded files persisted",
+      "status": "PASS",
+      "detail": "2/2 visible in 0x13",
+      "at": "15:13:59"
+    },
+    {
+      "stage": "L3",
+      "check": "0x84 download",
+      "status": "PASS",
+      "detail": "4096B/4096B in 242ms, deterministic=True, mp3sync=True",
+      "at": "15:14:00",
+      "evidence": {
+        "sha256": "fd1c1dd603facece73b5fba03a5dc341a828d9c5d7bbd9d68d11790eee6ab265",
+        "declared": 4096,
+        "got": 4096,
+        "ms": 242,
+        "head": "fff348c40020c12678007bde700d58b993b16f13710b1333ad9e901e4139c9d9"
+      }
+    },
+    {
+      "stage": "L3",
+      "check": "0x9A guard",
+      "status": "PASS",
+      "detail": "refused locally, nothing sent to device",
+      "at": "15:14:00"
+    },
+    {
+      "stage": "L3",
+      "check": "0x92 cleanup ...261022151347.mp3",
+      "status": "PASS",
+      "detail": "deleted own test recording",
+      "at": "15:14:00"
+    },
+    {
+      "stage": "L3",
+      "check": "0x92 cleanup ...261022151353.mp3",
+      "status": "PASS",
+      "detail": "deleted own test recording",
+      "at": "15:14:00"
+    },
+    {
+      "stage": "L3",
+      "check": "0x13 reflects deletion",
+      "status": "PASS",
+      "detail": "9 files remain",
+      "at": "15:14:00"
+    }
+  ]
+}

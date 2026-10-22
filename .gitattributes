@@ -1,0 +1,13 @@
+# Normalize line endings across Windows / macOS / Linux checkouts.
+# The repo hosts Python, TypeScript and Kotlin sources for the same protocol
+# core, so a stable LF checkout keeps diffs comparable between languages.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.mp3 binary
+*.zip binary

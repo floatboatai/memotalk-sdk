@@ -1,0 +1,273 @@
+{
+  "counts": {
+    "PASS": 23,
+    "WARN": 1
+  },
+  "results": [
+    {
+      "stage": "L1",
+      "check": "device discovered",
+      "status": "PASS",
+      "detail": "MemoTalk S1 @ F4:0E:11:0F:52:5D",
+      "at": "15:13:13"
+    },
+    {
+      "stage": "L1",
+      "check": "ble link established",
+      "status": "PASS",
+      "detail": "is_connected=True",
+      "at": "15:13:13"
+    },
+    {
+      "stage": "L1",
+      "check": "0x91 rtc handshake",
+      "status": "PASS",
+      "detail": "ack confirmed within 1s",
+      "at": "15:13:13"
+    },
+    {
+      "stage": "L1",
+      "check": "keepalive auto ping",
+      "status": "PASS",
+      "detail": "2 x 0x01 in 9s (configured interval 4s)",
+      "at": "15:13:22",
+      "evidence": {
+        "hits": 2
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x01 battery",
+      "status": "PASS",
+      "detail": "BatteryInfo(level=8, percent=80)",
+      "at": "15:13:22",
+      "evidence": {
+        "frame": "5A0401083057"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x01 api == raw parse",
+      "status": "PASS",
+      "detail": "BatteryInfo(level=8, percent=80)",
+      "at": "15:13:22"
+    },
+    {
+      "stage": "L2",
+      "check": "0x09 firmware",
+      "status": "PASS",
+      "detail": "FirmwareInfo(raw='206')",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A06093230369A45"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x09 api == raw parse",
+      "status": "PASS",
+      "detail": "V2.0.6",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0x14 sn+format",
+      "status": "PASS",
+      "detail": "DeviceIdentity(serial='Lp2UvCN000073947', format_code=0, realtime_asr_enabled=False)",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A15144C70325576434E30303030373339343700004074"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x14 api == raw parse",
+      "status": "PASS",
+      "detail": "Lp2UvCN000073947 MP3",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0x0F free space",
+      "status": "PASS",
+      "detail": "FreeSpace(success=True, percent=99)",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A050F01637152"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x0F api == raw parse",
+      "status": "PASS",
+      "detail": "99%",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0x0D import flag",
+      "status": "PASS",
+      "detail": "True",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A040D01F551"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x02 record state (FFE2)",
+      "status": "PASS",
+      "detail": "RecordState(code=2, state=<RecordStateCode.STOPPED: 0>, result=<RecordResult.SUCCESS: 1>, mac='F40E110F525D', bcd_time='20250607000000', filename='F40E110F525D_20250607000000.mp3', recorded_at=datetime.datetime(2025, 6, 7, 0, 0), raw=b'Z\\x12\\x02\\x00\\x01\\xf4\\x0e\\x11\\x0fR] %\\x06\\x07\\x00\\x00\\x00\\x14\\x9e')",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A12020001F40E110F525D20250607000000149E"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x02 api == raw parse",
+      "status": "PASS",
+      "detail": "STOPPED mac=F40E110F525D",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0xB1 sleep timeout",
+      "status": "PASS",
+      "detail": "SettingValue(type=<SettingType.SLEEP_TIMEOUT_SEC: 0>, success=True, value=300)",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A07B100012C01F176"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0xB1 sleep timeout api == raw",
+      "status": "PASS",
+      "detail": "300",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0xB1 max record",
+      "status": "PASS",
+      "detail": "SettingValue(type=<SettingType.MAX_RECORD_MINUTES: 1>, success=True, value=300)",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A07B101012C01F08A"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0xB1 max record api == raw",
+      "status": "PASS",
+      "detail": "300",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0xB1 usb switch",
+      "status": "PASS",
+      "detail": "SettingValue(type=<SettingType.USB_MASS_STORAGE: 2>, success=True, value=0)",
+      "at": "15:13:23",
+      "evidence": {
+        "frame": "5A06B10201002B6C"
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0xB1 usb switch api == raw",
+      "status": "PASS",
+      "detail": "0",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0x13 file list",
+      "status": "PASS",
+      "detail": "9 files in 93ms",
+      "at": "15:13:23",
+      "evidence": {
+        "files": [
+          {
+            "name": "F40E110F525D_20261018115620.mp3",
+            "size": 61440,
+            "dur": 15,
+            "fmt": "MP3",
+            "at": "2026-10-18 21:56:20"
+          },
+          {
+            "name": "F40E110F525D_20261018171803.mp3",
+            "size": 65536,
+            "dur": 16,
+            "fmt": "MP3",
+            "at": "2026-10-19 03:18:02"
+          },
+          {
+            "name": "F40E110F525D_20261018172003.mp3",
+            "size": 32768,
+            "dur": 8,
+            "fmt": "MP3",
+            "at": "2026-10-19 03:20:02"
+          },
+          {
+            "name": "F40E110F525D_20261021162640.mp3",
+            "size": 98304,
+            "dur": 24,
+            "fmt": "MP3",
+            "at": "2026-10-22 02:26:40"
+          },
+          {
+            "name": "F40E110F525D_20261021183632.mp3",
+            "size": 4096,
+            "dur": 1,
+            "fmt": "MP3",
+            "at": "2026-10-22 04:36:32"
+          },
+          {
+            "name": "F40E110F525D_20261021233534.mp3",
+            "size": 1429504,
+            "dur": 357,
+            "fmt": "MP3",
+            "at": "2026-10-22 09:35:34"
+          },
+          {
+            "name": "F40E110F525D_20261022001014.mp3",
+            "size": 704512,
+            "dur": 176,
+            "fmt": "MP3",
+            "at": "2026-10-22 10:10:14"
+          },
+          {
+            "name": "F40E110F525D_20261022002918.mp3",
+            "size": 651264,
+            "dur": 162,
+            "fmt": "MP3",
+            "at": "2026-10-22 10:29:18"
+          },
+          {
+            "name": "F40E110F525D_20261022003509.mp3",
+            "size": 200704,
+            "dur": 50,
+            "fmt": "MP3",
+            "at": "2026-10-22 10:35:08"
+          }
+        ]
+      }
+    },
+    {
+      "stage": "L2",
+      "check": "0x13 entry well-formed",
+      "status": "PASS",
+      "detail": "F40E110F525D_20261021183632.mp3 size=4096 dur=1s at=2026-10-22 04:36:32",
+      "at": "15:13:23"
+    },
+    {
+      "stage": "L2",
+      "check": "0x00 error frame",
+      "status": "WARN",
+      "detail": "no error frame: no response for command before timeout",
+      "at": "15:13:28"
+    }
+  ]
+}
