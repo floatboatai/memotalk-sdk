@@ -232,9 +232,9 @@ async def _cmd_scan(args) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="memotalk",
-        description=f"MemoTalk S1 / AI-PEN recorder client (memotalk-s1 {__version__})",
+        description=f"MemoTalk S1 / AI-PEN recorder client (memotalk-sdk {__version__})",
     )
-    parser.add_argument("--version", action="version", version=f"memotalk-s1 {__version__}")
+    parser.add_argument("--version", action="version", version=f"memotalk-sdk {__version__}")
     parser.add_argument("--scan-timeout", type=float, default=3.5)
     parser.add_argument("--prefer", default=None, help="prefer a device name or MAC")
     parser.add_argument("--simulate", action="store_true", help="run against the built-in simulator")

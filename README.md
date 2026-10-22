@@ -1,4 +1,4 @@
-# memotalk-s1
+# memotalk-sdk
 
 MemoTalk S1 / AI-PEN 录音笔的 Python 客户端库。补齐了原 SKILL 缺失的**传输层**与**通用应答解析层**，把 22 条硬件指令封装成 6 组类型化的原子能力。
 
@@ -18,7 +18,7 @@ pip install -e .
 或直接从目录使用：
 
 ```bash
-export PYTHONPATH=/path/to/memotalk-ble-client
+export PYTHONPATH=/path/to/memotalk-sdk
 ```
 
 依赖：`bleak >= 0.21`（仅连接真实设备时需要）。
@@ -205,3 +205,9 @@ python -m unittest discover -s tests -v
 ## 与 `memotalk-ble-skill` 的关系
 
 原 SKILL 是**协议字典 + 参考脚本**，本库是**可安装的客户端**。原 SKILL 目录未作改动，仍可用于协议查阅。函数命名保留了 `cmd_*` 别名（`cmd_read_battery()` 等），便于从原脚本迁移。
+
+---
+
+## 许可
+
+MIT，版权人 Floatboat 与 MemoTalk。见 [LICENSE](LICENSE)。

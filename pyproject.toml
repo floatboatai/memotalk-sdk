@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "memotalk-s1"
+name = "memotalk-sdk"
 version = "0.1.0"
 description = "MemoTalk S1 / AI-PEN BLE recorder client: transport layer, typed parsers, atomic capability API"
 readme = "README.md"

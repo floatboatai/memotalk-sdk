@@ -20,7 +20,7 @@
 ### 1.1 目录与体量
 
 ```
-memotalk-ble-client/
+memotalk-sdk/
 ├── CAPABILITY-MATRIX.md      189  能力映射表（下层 25 码 ↔ 上层 API）
 ├── README.md                 207  使用文档 + 分层示意（第 145-158 行）
 ├── pyproject.toml             31  setuptools 打包，唯一入口 memotalk.cli:main
@@ -212,7 +212,7 @@ vectors/
 | 3 | `client.py` 875 行混三件事 | 能力 API 190-595 · FTP 599-680 · macOS `subprocess` 653-680 | 平台代码长在协议库最顶层，非 Python 实现无法切分 |
 | 4 | `_bcd_to_datetime` 跨模块私有导入 | `parsers.py:36` ↔ `models.py:23` | Kotlin/TS 严格可见性下直接编译失败 |
 | 5 | 22 行纯别名 `cmd_*` | `commands.py:256-277` | 纯历史包袱，四语言各抄一遍是 88 行噪音 |
-| 6 | 命名三套：目录 `memotalk-ble-client` / 包 `memotalk` / PyPI `memotalk-s1` | `pyproject.toml:6` · `README.md:1` | 四语言后会有 4 个包名要统一 |
+| 6 | ~~命名三套~~ **已统一为 `memotalk-sdk`**（2026-10-22） | `pyproject.toml:6` · `README.md:1` · `cli.py:235` | 制品名已统一；命名空间 `memotalk` 按规则保留，见 §5.1 |
 | 7 | 无 `.git` / 无 `.gitignore` / 无 `LICENSE`，`__pycache__` 与 `.egg-info` 留在目录里 | 目录实测 | 多语言单仓的前置条件；`egg-info` 是构建残留，不该进库 |
 
 README 第 145-158 行还有一份与 `__init__.py:3-11` 平行的分层示意——同一事实的第三处副本，建议改为链接本文。
@@ -234,7 +234,7 @@ memotalk-sdk/                       ← 仓库名收敛为一个（决策点 1�
 │
 ├── packages/
 │   ├── python/
-│   │   ├── pyproject.toml          name = memotalk-s1
+│   │   ├── pyproject.toml          name = memotalk-sdk
 │   │   └── memotalk/
 │   │       ├── core/               ← A 层，1657 行迁入，文件名不变
 │   │       ├── runtime/            ← B 层
@@ -265,6 +265,16 @@ memotalk-sdk/                       ← 仓库名收敛为一个（决策点 1�
 └── AGENTS.md                       ← 可选，见决策点 4
 ```
 
+### 5.1 命名规则（2026-10-22 已定）
+
+| 概念 | 值 | 理由 |
+| :-- | :-- | :-- |
+| 仓库名 / 本地目录 | `memotalk-sdk` | 已执行 |
+| 制品名（发行标识） | PyPI `memotalk-sdk` · npm `@memotalk/sdk` · Maven `memotalk-sdk` | 对外可检索、可安装的正式名 |
+| 命名空间（导入名） | Python 包 `memotalk` · TS scope `@memotalk` · Kotlin `ai.memotalk` | `memotalk-sdk` 含连字符，不是合法 Python / Kotlin 标识符；且 `from memotalk import ...` 是与原 SKILL 兼容的既有接口 |
+
+一句话：**制品名统一，命名空间独立**。这不是遗留的不一致，而是四种语言共同遵守的规则——`pip install memotalk-sdk` 之后 `import memotalk`，与 `pip install pillow` 之后 `import PIL` 同理。
+
 ---
 
 ## 6. 迁移路线
@@ -290,7 +300,7 @@ memotalk-sdk/                       ← 仓库名收敛为一个（决策点 1�
 
 | # | 决策 | 选项 | 建议 |
 | :-: | :-- | :-- | :-- |
-| 1 | 仓库名 | `memotalk-sdk` / `memotalk-ble-client`（沿用） | 改成 `memotalk-sdk`，包名统一 `memotalk-s1` |
+| 1 | 仓库名 | ~~待定~~ **已定 `memotalk-sdk`** | 已执行：本地目录 / `pyproject.toml` 制品名 / README 标题三处统一 |
 | 2 | JS 与 TS 关系 | (a) TS 为源，编译出 ESM+CJS 双产物 (b) JS 单独维护一套手写 CJS | **(a)**。(b) 等于维护两套实现，vectors 会变成两套断言 |
 | 3 | Kotlin 形态 | (a) KMP：commonMain 协议核 + androidMain transport + jvmMain CLI (b) 只做 Android 库 | **(a)**。协议核纯 JVM 才能做服务端离线解析，且正好落在 A/B 边界上 |
 | 4 | 一致性门禁落点 | (a) CI：三语言各自跑 `vectors/`，一红全红 (b) 只写进 `AGENTS.md` 做约定 | **(a)+(b)**。CI 是硬约束，`AGENTS.md` 让后续协作不再重新讨论 |
