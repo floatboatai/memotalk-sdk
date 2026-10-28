@@ -1,0 +1,11 @@
+name: S1
+on:
+  workflow_dispatch:
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - name: a
+        if: ${{ secrets.FOO == 'x' }}
+        run: echo hi
+
