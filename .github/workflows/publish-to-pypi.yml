@@ -11,16 +11,16 @@ on:
         default: false
 
 concurrency:
-  group: publish-${{ github.ref }}
+  group: publish-ref
   cancel-in-progress: false
 
 permissions:
   contents: read
-  id-token: write   # trusted publishing (OIDC) - no long-lived token needed
+  id-token: write
 
 jobs:
   publish:
-    name: build + upload to PyPI
+    name: build + upload
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -33,20 +33,19 @@ jobs:
       - name: Build distributions
         run: uv build --out-dir dist
 
-      - name: Check the release tag matches the package version
+      - name: Check the tag matches the package version
         if: github.event_name == 'release'
         run: |
           set -euo pipefail
           tag_version="${GITHUB_REF_NAME#v}"
-          pkg_version="$(uv run --no-project python -c \
-            "import re;print(re.search(r'^version\s*=\s*\"([^\"]+)\"', open('pyproject.toml',encoding='utf-8').read(), re.M).group(1))")"
+          pkg_version="$(python3 scripts/package_version.py)"
           echo "tag=$tag_version package=$pkg_version"
           if [ "$tag_version" != "$pkg_version" ]; then
-            echo "::error::release tag $tag_version does not match pyproject version $pkg_version"
+            echo "::error::tag $tag_version does not match version $pkg_version"
             exit 1
           fi
 
-      - name: Upload to TestPyPI (dry run)
+      - name: Upload to TestPyPI
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
@@ -55,7 +54,7 @@ jobs:
           skip-existing: true
           verbose: true
 
-      - name: Upload to PyPI (trusted publishing / OIDC)
+      - name: Upload to PyPI
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) && secrets.PYPI_API_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
@@ -63,7 +62,7 @@ jobs:
           packages-dir: dist/
           verbose: true
 
-      - name: Upload to PyPI (API token)
+      - name: Upload to PyPI with a token
         if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) && secrets.PYPI_API_TOKEN != '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
