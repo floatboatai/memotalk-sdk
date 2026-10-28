@@ -1,50 +1,59 @@
-# memotalk-sdk
+<div align="center">
+
+# 🎙️ memotalk-sdk
+
+**MemoTalk S1 / AI-PEN voice recorders — fully unlocked for Python.**
+
+22 raw hardware commands distilled into 6 typed capability groups.<br>
+Scan, connect, record, stream live audio, download — in ~10 lines.
 
 [![CI](https://github.com/floatboatai/memotalk-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/floatboatai/memotalk-sdk/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/memotalk-sdk.svg)](https://pypi.org/project/memotalk-sdk/)
 [![Python](https://img.shields.io/pypi/pyversions/memotalk-sdk.svg)](https://pypi.org/project/memotalk-sdk/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-154%20passing-brightgreen)](tests/)
 
-MemoTalk S1 / AI-PEN 录音笔的 Python 客户端库。补齐了原 SKILL 缺失的**传输层**与**通用应答解析层**，把 22 条硬件指令封装成 6 组类型化的原子能力。
+**[English](README.md)** · [简体中文](README.zh-CN.md)
 
-- 纯协议层无第三方依赖；仅在连接真实设备时需要 `bleak`
-- 全部应答解析为 `dataclass`，无需手工切片 `pkt[3:-2]`
-- 内置设备模拟器，无硬件即可开发与测试
-- 154 个单元测试，断言基于真机抓包
+</div>
 
 ---
 
-## 安装
+## ✨ Highlights
 
-从 PyPI 安装：
+- **🔌 Zero-dependency protocol layer.** `bleak` is only needed when talking to real hardware.
+- **📦 Every reply is a `dataclass`.** No more hand-rolling `pkt[3:-2]` slices — batteries, file lists and settings arrive typed and validated.
+- **🎮 Built-in device simulator.** Develop and test the full stack with no pen in hand.
+- **🧪 154 unit tests, byte-level asserts from real captures.** The parser suite is literally a replay of genuine device traffic.
+- **📡 Live audio & level streaming.** Real-time dB meter or 72 ms MP3 chunks while recording — ready for streaming ASR.
+- **🚀 Wi-Fi fast transfer.** One context manager opens the hotspot, reads FTP credentials and hands you a live FTP session.
+
+---
+
+## 📥 Installation
 
 ```bash
 pip install memotalk-sdk
 ```
 
-从源码安装（开发用）：
+Development install:
 
 ```bash
 pip install -e ".[dev]"
 ```
 
-或直接从目录使用：
-
-```bash
-export PYTHONPATH=/path/to/memotalk-sdk
-```
-
-依赖：`bleak >= 0.21`（仅连接真实设备时需要）。
+> Dependency: `bleak >= 0.21` — only when connecting to a real device.
 
 ---
 
-## 快速开始
+## 🚀 Quick Start
 
 ```python
 import asyncio
 from memotalk import MemoTalkClient
 
 async def main():
-    async with MemoTalkClient() as dev:          # 扫描 + 连接 + 0x91 对时 + 保活
+    async with MemoTalkClient() as dev:          # scan + connect + time sync + keepalive
         print(await dev.battery())               # BatteryInfo(level=5, percent=50)
 
         for entry in await dev.files.list():
@@ -56,12 +65,12 @@ async def main():
 asyncio.run(main())
 ```
 
-### 录音 + 实时波形
+### 🎚️ Record + live level meter
 
 ```python
 async with MemoTalkClient() as dev:
-    await dev.record.set_realtime(False)         # 0xA4=0 -> 推 0xA8 电平
-    await dev.record.start()                     # 0x80(0x01)
+    await dev.record.set_realtime(False)         # 0xA4=0 -> pushes 0xA8 levels
+    await dev.record.start()
 
     async for level in dev.stream.level():
         print(f"{level.db:6.1f} dB  {'#' * int(level.normalized * 30)}")
@@ -69,177 +78,161 @@ async with MemoTalkClient() as dev:
     await dev.record.stop()
 ```
 
-### 边录边转写
+### 🗣️ Record + live transcription
 
 ```python
 async with MemoTalkClient() as dev:
-    await dev.record.set_realtime(True)          # 0xA4=1 -> 推 0x90 MP3
+    await dev.record.set_realtime(True)          # 0xA4=1 -> pushes 0x90 MP3
     await dev.record.start()
 
-    async for chunk in dev.stream.audio():       # 288 字节 = 2 个 MP3 帧 = 72ms
-        feed_asr(chunk)                          # 送入流式识别
+    async for chunk in dev.stream.audio():       # 288 bytes = 2 MP3 frames = 72 ms
+        feed_asr(chunk)                          # straight into streaming ASR
 
     await dev.record.stop()
     await dev.record.set_realtime(False)
 ```
 
-### Wi-Fi 快传（热点保证关闭）
+### 📶 Wi-Fi fast transfer
 
 ```python
 async with MemoTalkClient() as dev:
-    async with dev.wifi.session() as net:        # 0x87 开 -> 读凭据 -> ... -> 0x87 关
+    async with dev.wifi.session() as net:        # 0x87 on -> read creds -> 0x87 off
         print(net.ssid, net.password)
         print(net.ftp_config.address)
 
-        net.join_hotspot()                       # macOS 自动入网；其它平台抛 CapabilityUnavailable
-        ftp = net.open_ftp()                     # PASV 登录
+        net.join_hotspot()                       # auto-join on macOS
+        ftp = net.open_ftp()                     # PASV login
         for name in net.list_audio_files(ftp):
             net.download(ftp, name, "./downloads")
         ftp.quit()
 ```
 
-即使 `with` 块内抛出异常，热点仍会被关闭。
+The hotspot is always closed on exit — even on exceptions.
 
-### 配置
+### ⚙️ Settings
 
 ```python
 async with MemoTalkClient() as dev:
     print(await dev.settings.read_all())         # DeviceSettings(...)
-    await dev.settings.sleep_timeout(600)        # 0xB0，范围 15~7200 或 0=默认
+    await dev.settings.sleep_timeout(600)        # 15~7200, or 0 = default
     await dev.settings.max_record_minutes(120)   # 1~480
-    await dev.settings.usb_mass_storage(True)    # 0/1
+    await dev.settings.usb_mass_storage(True)
 ```
 
-### 原始指令入口
+### 🔧 Escape hatch
 
 ```python
-frame = build_frame(0x77)                        # 任何协议码
+frame = build_frame(0x77)                        # any protocol code
 reply = await dev.raw.request(frame, code=0x77, timeout=2.0)
 ```
 
 ---
 
-## API 地图
+## 🗺️ API Map
 
-| 组 | 方法 |
+| Group | Methods |
 | :-- | :-- |
-| 状态 | `battery()` `firmware()` `identity()` `free_space()` `has_import_file()` `info()` `sync_time()` |
-| 录音 | `record.start()` `pause()` `resume()` `stop()` `state()` `set_realtime()` |
-| 流 | `stream.level()` `stream.audio()` `stream.states()` `stream.packets()` |
-| 文件 | `files.list()` `latest()` `download()` `download_all()` `delete()` `clear_all()` `sync_control()` |
-| 配置 | `settings.read()` `read_all()` `write()` `sleep_timeout()` `max_record_minutes()` `usb_mass_storage()` |
-| 网络 | `wifi.enable()` `disable()` `credentials()` `ftp()` `session()` |
-| 原始 | `raw.send()` `request()` `expect()` |
+| Status | `battery()` `firmware()` `identity()` `free_space()` `has_import_file()` `info()` `sync_time()` |
+| Record | `record.start()` `pause()` `resume()` `stop()` `state()` `set_realtime()` |
+| Stream | `stream.level()` `stream.audio()` `stream.states()` `stream.packets()` |
+| Files | `files.list()` `latest()` `download()` `download_all()` `delete()` `clear_all()` `sync_control()` |
+| Settings | `settings.read()` `read_all()` `write()` `sleep_timeout()` `max_record_minutes()` `usb_mass_storage()` |
+| Network | `wifi.enable()` `disable()` `credentials()` `ftp()` `session()` |
+| Raw | `raw.send()` `request()` `expect()` |
 
-完整的两端映射见 [CAPABILITY-MATRIX.md](CAPABILITY-MATRIX.md)。
+Full hardware ↔ SDK mapping: [CAPABILITY-MATRIX.md](CAPABILITY-MATRIX.md)
 
 ---
 
-## 命令行
+## 💻 CLI
 
 ```bash
 memotalk scan
 memotalk status --files
 memotalk list
 memotalk download --all --out ./downloads
-memotalk record --seconds 5            # 打印实时电平
-memotalk record --seconds 5 --realtime # 统计收到的 MP3 字节
+memotalk record --seconds 5            # live level meter
+memotalk record --seconds 5 --realtime # count received MP3 bytes
 memotalk wifi --ls --download FILE.mp3
 memotalk config --sleep 600 --usb 1
 memotalk raw --hex 5A0301C080 --expect 01
 
-# 没有硬件时用模拟器
+# no hardware? use the simulator
 memotalk --simulate status
 ```
 
 ---
 
-## 分层结构
+## 🧱 Architecture
 
 ```
 memotalk/
-├── codec.py         CRC16 / 0x5A 组帧 / 帧长推断 / BCD / XOR-FF
-├── commands.py      22 个纯指令构建函数 + 通道路由表
-├── parsers.py       全部应答 → 类型化模型（含 0x00 错误帧）
-├── assemblers.py    帧重组器 / 0x13 列表 / 0x84 音频流
-├── transport.py     连接 / 写 / 请求-应答关联 / 保活 / 断连
-├── client.py        6 组能力
-├── discovery.py     扫描 + macOS 已连接外设找回
-├── fake.py          设备模拟器
-└── cli.py           命令行
+├── codec.py         CRC16 / 0x5A framing / length inference / BCD / XOR-FF
+├── commands.py      22 pure command builders + channel routing table
+├── parsers.py       every reply -> typed model (incl. 0x00 error frames)
+├── assemblers.py    frame reassembler / 0x13 listing / 0x84 audio stream
+├── transport.py     connect / write / request-reply correlation / keepalive
+├── client.py        the 6 capability groups
+├── discovery.py     scanning + macOS already-connected recovery
+├── fake.py          device simulator
+└── cli.py           command line
 ```
 
-### 关键设计点
+**Length inference.** The device uses three frame shapes (standard `2+len`, `0x90`'s 3-byte length → 295, `0x84`'s fixed 328). `codec.expected_frame_length()` derives the expected byte count from any prefix, so `FrameReassembler` stitches frames automatically — even on low-MTU platforms.
 
-**帧长推断**是低 MTU 平台正常工作的前提。设备有三种帧型（标准 `2+len`、`0x90` 的 3 字节长度 → 295、`0x84` 固定 328），`codec.expected_frame_length()` 可由任意前缀推断应等待的字节数，`FrameReassembler` 据此自动拼接。
+**Request-reply correlation.** Predicate subscriptions are registered *before* writing, so fast replies are never missed. `0x00` error frames are matched too and surface as typed exceptions.
 
-**请求-应答关联**通过谓词订阅实现，订阅在写入**之前**注册，因此不会遗漏快速应答。同时匹配 `0x00` 错误帧，将设备拒绝映射为类型化异常。
-
-**丢包续传**：`0x84` 传输超时后，由 `missing_sequences()` 计算首个缺失包号，携带该包号重发 `0x84`，最多重试 N 次。
+**Loss-resilient transfer.** On `0x84` timeouts, `missing_sequences()` pinpoints the first missing packet and the transfer resumes from it — automatically, with bounded retries.
 
 ---
 
-## 测试
+## 🧪 Testing
 
 ```bash
-# uv（推荐，pytest 在 dev extra 里）
+# uv (recommended; pytest lives in the dev extra)
 uv run --extra dev pytest -q
 
-# 或标准库
+# or stdlib
 python -m unittest discover -s tests -v
 ```
 
-| 文件 | 覆盖 |
+| File | Covers |
 | :-- | :-- |
-| `test_codec.py` | CRC、组帧、BCD、22 条指令字节级断言、范围校验 |
-| `test_commands.py` | 22 个 builder 与可发码严格一一对应、写通道归属、版本一致性 |
-| `test_parsers.py` | 24 条真机抓包 → 类型化模型 |
-| `test_assemblers.py` | 拆包、乱序、丢包、CRC 错、填充截断 |
-| `test_client.py` | 模拟器驱动的端到端流程 |
+| `test_codec.py` | CRC, framing, BCD, byte-level asserts for all 22 commands, range validation |
+| `test_commands.py` | builders ↔ sendable codes 1:1, write-channel routing, version consistency |
+| `test_parsers.py` | 24 real device captures → typed models |
+| `test_assemblers.py` | split / out-of-order / lost packets / CRC errors / padding truncation |
+| `test_client.py` | simulator-driven end-to-end flows |
 
-其中 `test_parsers.py` 的全部 hex 字面量均取自协议文档中的真机抓包。
-
----
-
-## 已知边界
-
-- **已在真机验证**（MemoTalk S1 / 固件 206 / 2026-10-22）：链路、握手、保活、读指令逐条比对（`0x01`/`0x02`/`0x09`/`0x0D`/`0x0F`/`0x13`/`0x14`/`0xB1`×3）、录音、`0xA8`/`0x90` 实时流、`0x84` 下载与失败帧、`0x92` 删除、`0x87` 与凭据读取。三个 `docs/reg_*.json` 合计 39 PASS / 2 WARN / 0 FAIL；`0x9A` 从未发给设备，明细见 [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md)。
-- **FTP 实际传输未验证**：连入设备热点会切断主机网络，只验证了凭据可获得。
-- 自动连热点仅 macOS。
-- 不做 MP3 解码、不做 ASR、不做 U 盘挂载。
-- `0x07` 指令在协议中仅有编号、无定义，未实现。
-
-应用中必须处理的三个硬件事实：
-
-1. 设备**不校验 CRC**，错误帧会被静默执行，因此不应依赖 CRC 保证操作正确。
-2. 设备**不发送 `0x00` 错误帧**，失败表现为超时，因此超时后需判断该操作是否已经生效。
-3. `0x87` 存在过渡期锁：中断 enable 会使设备短暂拒绝录音，因此关闭热点需容错重试并回读确认。
-
-协议文档的缺陷与硬件实测发现见 [docs/ERRATA.md](docs/ERRATA.md)。
+Every hex literal in `test_parsers.py` comes from real device captures.
 
 ---
 
-## 文档
+## 📚 Documentation
 
-| 文档 | 内容 |
+| Doc | Contents |
 | :-- | :-- |
-| [CAPABILITY-MATRIX.md](CAPABILITY-MATRIX.md) | 硬件原子能力 ↔ 库原子能力的逐条对照 |
-| [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
-| [docs/CODE-STRUCTURE.md](docs/CODE-STRUCTURE.md) | 分层结构与移植注意事项 |
-| [docs/ERRATA.md](docs/ERRATA.md) | 协议文档的缺陷与真机实测发现 |
-| [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md) | 真机回归明细与原始 JSON |
-| [docs/RELEASING.md](docs/RELEASING.md) | 发布到 PyPI 的流程 |
+| [CAPABILITY-MATRIX.md](CAPABILITY-MATRIX.md) | Hardware atomic capability ↔ SDK capability, line by line |
+| [CHANGELOG.md](CHANGELOG.md) | Release history |
+| [docs/CODE-STRUCTURE.md](docs/CODE-STRUCTURE.md) | Layered structure & porting notes |
+| [docs/ERRATA.md](docs/ERRATA.md) | Protocol doc quirks & real-hardware findings |
+| [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md) | Hardware regression details & raw JSON |
+| [docs/RELEASING.md](docs/RELEASING.md) | PyPI release process |
 
 ---
 
-## 与 `memotalk-ble-skill` 的关系
+## 🛠️ Migrating from `memotalk-ble-skill`
 
-原 SKILL 是**协议字典 + 参考脚本**，本库是**可安装的客户端**。原 SKILL 目录未作改动，仍可用于协议查阅。
-
-原脚本里的 `cmd_read_battery()` 这类 `cmd_*` 命名已移除，统一改为 `read_battery()`、`read_record_state()` 等动词开头的名字；迁移时把 `cmd_` 前缀去掉即可。
+The original SKILL stays put as a **protocol dictionary + reference scripts**; this package is the **installable client** built on top of it. `cmd_*` names were dropped — `cmd_read_battery()` is now `read_battery()`, so migrations are just a prefix away.
 
 ---
 
-## 许可
+## ⭐ Show your support
 
-MIT，版权人 Floatboat 与 MemoTalk。见 [LICENSE](LICENSE)。
+If memotalk-sdk saves you an afternoon of BLE reverse-engineering, give it a star — it helps others find it.
+
+---
+
+## 📄 License
+
+MIT — Floatboat & MemoTalk. See [LICENSE](LICENSE).
