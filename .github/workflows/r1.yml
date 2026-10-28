@@ -1,4 +1,4 @@
-name: ZProbe
+name: R1
 on:
   workflow_dispatch:
 jobs:
@@ -6,3 +6,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo hi
+
