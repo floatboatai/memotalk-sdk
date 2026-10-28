@@ -1,0 +1,15 @@
+name: PH
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: d
+        type: boolean
+        default: false
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - name: a
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: echo hi
