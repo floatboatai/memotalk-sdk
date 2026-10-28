@@ -88,7 +88,8 @@ class DeviceErrorResponse(MemoTalkError):
         except ValueError:
             text = f"device error 0x{self.code:02X}"
         # 0x04 / 0x05 echo the offending command + params after the code byte.
-        self.echoed = payload[1:]
+        # ``payload`` already starts after the code byte, so it *is* the echo.
+        self.echoed = payload
         super().__init__(text)
 
     @classmethod

@@ -144,4 +144,4 @@ SYNC_PAYLOAD_SIZE = 320
 
 REALTIME_FRAME_SIZE = 295        # 0x90 frame total length
 AUDIO_STREAM_TOTAL = REALTIME_FRAME_SIZE
-REALTIME_PAYLOAD = slice(5, 293)  # 288 bytes = 3 x 96B MP3 frames
+REALTIME_PAYLOAD = slice(5, 293)  # 288 bytes = 2 x 144B MPEG-2 L3 frames (72ms)

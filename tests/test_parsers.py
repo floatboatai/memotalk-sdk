@@ -12,7 +12,7 @@ import unittest
 from memotalk import parsers
 from memotalk.codec import build_frame
 from memotalk.constants import Cmd, DeviceErrorCode, RecordResult, RecordStateCode, SettingType, SyncOp
-from memotalk.errors import ProtocolError
+from memotalk.errors import DeviceErrorResponse, InvalidParameter, ProtocolError
 
 # --- captured frames --------------------------------------------------------
 BATTERY = "5A040105F192"
@@ -248,6 +248,21 @@ class ErrorFrameTests(unittest.TestCase):
     def test_error_with_echo(self):
         frame = build_frame(Cmd.ERROR, bytes([0x04, 0x77]))
         self.assertEqual(parsers.parse_error(frame), DeviceErrorCode.INVALID_COMMAND)
+
+    def test_error_frame_echoed_keeps_the_offending_command(self):
+        # 0x04 echoes the rejected command after the error code byte.
+        frame = build_frame(Cmd.ERROR, bytes([0x04, 0x77]))
+        err = DeviceErrorResponse.from_frame(frame)
+        self.assertEqual(err.code, 0x04)
+        self.assertEqual(err.echoed, bytes([0x77]))
+        self.assertEqual(err.echoed, err.payload)
+
+    def test_error_frame_echoed_keeps_the_offending_parameters(self):
+        # 0x05 echoes the rejected parameter(s) after the error code byte.
+        frame = build_frame(Cmd.ERROR, bytes([0x05, 0x02, 0x00]))
+        err = InvalidParameter.from_frame(frame)
+        self.assertEqual(err.code, 0x05)
+        self.assertEqual(err.echoed, bytes([0x02, 0x00]))
 
 
 class RobustnessTests(unittest.TestCase):

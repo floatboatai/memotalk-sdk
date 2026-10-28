@@ -13,6 +13,9 @@ pip-wheel-metadata/
 venv/
 env/
 
+# uv lockfile (resolved locally, not pinned for this project)
+uv.lock
+
 # Test / tooling caches
 .pytest_cache/
 .mypy_cache/

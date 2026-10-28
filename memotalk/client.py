@@ -327,12 +327,21 @@ class StreamController:
             transport.unsubscribe(sub)
 
     async def level(self) -> AsyncIterator[AudioLevel]:
-        """0xA8 - ~10 frames per second while recording with realtime mode off."""
+        """0xA8 - level frames while recording with realtime mode off.
+
+        Measured on hardware: 50 frames in 3 s (~16.7 frames/s).
+        """
         async for frame in self._iterate(parsers.is_audio_level_frame):
             yield parsers.parse_audio_level(frame)
 
     async def audio(self) -> AsyncIterator[bytes]:
-        """0x90 - 288-byte MP3 chunks (3 x 96B frames = 72ms) for live ASR."""
+        """0x90 - 288-byte MP3 chunks for live ASR.
+
+        The real capture carries the sync header ``FF F3 48 C4`` = MPEG-2
+        Layer III, 32 kbps, 16 kHz, mono. A frame of that shape is
+        72 * 32000 / 16000 = 144 bytes (36 ms), so 288 bytes carry
+        2 frames = 72 ms.
+        """
         async for frame in self._iterate(parsers.is_audio_stream_frame):
             yield parsers.parse_audio_stream(frame)
 

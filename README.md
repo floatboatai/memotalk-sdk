@@ -64,7 +64,7 @@ async with MemoTalkClient() as dev:
     await dev.record.set_realtime(True)          # 0xA4=1 -> 推 0x90 MP3
     await dev.record.start()
 
-    async for chunk in dev.stream.audio():       # 288 字节 = 3 个 MP3 帧 = 72ms
+    async for chunk in dev.stream.audio():       # 288 字节 = 2 个 MP3 帧 = 72ms
         feed_asr(chunk)                          # 送入流式识别
 
     await dev.record.stop()
