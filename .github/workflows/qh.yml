@@ -1,0 +1,11 @@
+name: QH
+on:
+  workflow_dispatch:
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check
+        run: |
+          pkg_version=$(uv run --no-project python -c 'import re;print(re.search(r"^version\s*=\s*\"([^\"]+)\"", open("pyproject.toml").read(), re.M).group(1))')
+          echo "$pkg_version"
