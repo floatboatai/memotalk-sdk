@@ -92,7 +92,7 @@
 | `0x90` 帧数 | **42 帧** |
 | 总字节 | **12096 B** = 42 × 288 |
 | 每帧长度 | 全部 **288 字节**（按同步头 `FF F3 48 C4` = MPEG-2 Layer III / 32kbps / 16kHz，单帧 144B，即 2×144B = 72ms） |
-| MP3 同步头 | 全部 `FF F3 48 C4` ✅ |
+| MP3 同步头 | 全部 `FF F3 48 C4` |
 
 本采样窗口内共收到 42 帧 ≈ 3 秒，与协议文档「4 秒约 102 帧」的理论值（约 14 帧/秒）不一致；两者帧率口径不同，帧率待确认。低 MTU 重组器未产生错位。
 
@@ -105,7 +105,7 @@
 | 实际下载 | **4096 B**（按 `size` 截断填充正确） |
 | 耗时 | **242 ms** |
 | 两次下载一致性 | **SHA256 相同**（确定性） |
-| MP3 同步头 | 存在 ✅ |
+| MP3 同步头 | 存在 |
 
 该链路在原 SKILL 中仅有文档说明、未实现（含缺包重传逻辑），本次已在真机验证通过。
 
@@ -198,12 +198,12 @@
 
 | # | 改进 | 状态 | 实现 |
 | :-: | :-- | :-- | :-- |
-| 1 | `disable()` 重试 + 回读 `0x03` 确认关闭 | ✅ 代码 + 单测 + 真机 | `WifiController.disable()` / `hotspot_state()` / `last_close_report` |
-| 2 | `download()` 对缺失文件抛 `FileNotFoundOnDevice` | ✅ 代码 + 单测 + 真机 | `FileController.download()` |
-| 3 | `enable` / `disable` / `session` 默认超时 8s → 20s | ✅ 代码 + 真机 | `WifiController` |
-| 4 | `session()` 在 enable 失败时也执行尽力关闭 | ✅ 代码 + 单测 | `WifiController.session()` |
-| 5 | 不把 CRC 当安全保证 | ✅ 文档约定 | ERRATA E8 |
-| 6 | `0x84` 失败帧按 `exists` 分支解析（见 ERRATA E11） | ✅ 代码 + 单测 + 真机 | `parsers.parse_sync_ack` |
+| 1 | `disable()` 重试 + 回读 `0x03` 确认关闭 | 代码 + 单测 + 真机 | `WifiController.disable()` / `hotspot_state()` / `last_close_report` |
+| 2 | `download()` 对缺失文件抛 `FileNotFoundOnDevice` | 代码 + 单测 + 真机 | `FileController.download()` |
+| 3 | `enable` / `disable` / `session` 默认超时 8s → 20s | 代码 + 真机 | `WifiController` |
+| 4 | `session()` 在 enable 失败时也执行尽力关闭 | 代码 + 单测 | `WifiController.session()` |
+| 5 | 不把 CRC 当安全保证 | 文档约定 | ERRATA E8 |
+| 6 | `0x84` 失败帧按 `exists` 分支解析（见 ERRATA E11） | 代码 + 单测 + 真机 | `parsers.parse_sync_ack` |
 
 ### 复验结果
 

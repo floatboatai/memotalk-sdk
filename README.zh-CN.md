@@ -19,18 +19,18 @@
 
 ---
 
-## ✨ 亮点
+## 亮点
 
-- **🔌 纯协议层，零依赖。** 只有连接真机时才需要 `bleak`。
-- **📦 应答全部是 `dataclass`。** 告别手工切片 `pkt[3:-2]`——电量、文件列表、配置到手即类型化、已校验。
-- **🎮 内置设备模拟器。** 手边没有笔，照样开发、测试完整链路。
-- **🧪 154 个单元测试，断言来自真机抓包。** 解析测试套件就是真机流量的逐字节重放。
-- **📡 实时音频与电平流。** 录音时实时 dB 电平条或 72ms MP3 分片——直接对接流式 ASR。
-- **🚀 Wi-Fi 快传。** 一个上下文管理器开热点、读 FTP 凭据，递给你一条活的 FTP 连接。
+- **纯协议层，零依赖。** 只有连接真机时才需要 `bleak`。
+- **应答全部是 `dataclass`。** 告别手工切片 `pkt[3:-2]`——电量、文件列表、配置到手即类型化、已校验。
+- **内置设备模拟器。** 手边没有笔，照样开发、测试完整链路。
+- **154 个单元测试，断言来自真机抓包。** 解析测试套件就是真机流量的逐字节重放。
+- **实时音频与电平流。** 录音时实时 dB 电平条或 72ms MP3 分片——直接对接流式 ASR。
+- **Wi-Fi 快传。** 一个上下文管理器开热点、读 FTP 凭据，递给你一条活的 FTP 连接。
 
 ---
 
-## 📥 安装
+## 安装
 
 ```bash
 pip install memotalk-sdk
@@ -46,7 +46,7 @@ pip install -e ".[dev]"
 
 ---
 
-## 🚀 快速开始
+## 快速开始
 
 ```python
 import asyncio
@@ -65,7 +65,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### 🎚️ 录音 + 实时波形
+### 录音 + 实时波形
 
 ```python
 async with MemoTalkClient() as dev:
@@ -78,7 +78,7 @@ async with MemoTalkClient() as dev:
     await dev.record.stop()
 ```
 
-### 🗣️ 边录边转写
+### 边录边转写
 
 ```python
 async with MemoTalkClient() as dev:
@@ -92,7 +92,7 @@ async with MemoTalkClient() as dev:
     await dev.record.set_realtime(False)
 ```
 
-### 📶 Wi-Fi 快传
+### Wi-Fi 快传
 
 ```python
 async with MemoTalkClient() as dev:
@@ -109,7 +109,7 @@ async with MemoTalkClient() as dev:
 
 无论 `with` 块内发生什么，热点都会被可靠关闭。
 
-### ⚙️ 配置
+### 配置
 
 ```python
 async with MemoTalkClient() as dev:
@@ -119,7 +119,7 @@ async with MemoTalkClient() as dev:
     await dev.settings.usb_mass_storage(True)    # 0/1
 ```
 
-### 🔧 原始指令入口
+### 原始指令入口
 
 ```python
 frame = build_frame(0x77)                        # 任何协议码
@@ -128,7 +128,7 @@ reply = await dev.raw.request(frame, code=0x77, timeout=2.0)
 
 ---
 
-## 🗺️ API 地图
+## API 地图
 
 | 组 | 方法 |
 | :-- | :-- |
@@ -144,7 +144,7 @@ reply = await dev.raw.request(frame, code=0x77, timeout=2.0)
 
 ---
 
-## 💻 命令行
+## 命令行
 
 ```bash
 memotalk scan
@@ -163,7 +163,7 @@ memotalk --simulate status
 
 ---
 
-## 🧱 分层结构
+## 分层结构
 
 ```
 memotalk/
@@ -186,7 +186,7 @@ memotalk/
 
 ---
 
-## 🧪 测试
+## 测试
 
 ```bash
 # uv（推荐，pytest 在 dev extra 里）
@@ -208,7 +208,7 @@ python -m unittest discover -s tests -v
 
 ---
 
-## 📚 文档
+## 文档
 
 | 文档 | 内容 |
 | :-- | :-- |
@@ -221,18 +221,18 @@ python -m unittest discover -s tests -v
 
 ---
 
-## 🛠️ 从 `memotalk-ble-skill` 迁移
+## 从 `memotalk-ble-skill` 迁移
 
 原 SKILL 保持原位，继续充当**协议字典 + 参考脚本**；本库是在其之上构建的**可安装客户端**。`cmd_*` 命名已统一为动词开头——`cmd_read_battery()` 即 `read_battery()`，迁移只需去掉前缀。
 
 ---
 
-## ⭐ 支持一下
+## 支持一下
 
 如果 memotalk-sdk 帮你省下了一个下午的蓝牙逆向时间，欢迎点个 Star，让更多人看到它。
 
 ---
 
-## 📄 许可
+## 许可
 
 MIT —— Floatboat 与 MemoTalk。见 [LICENSE](LICENSE)。

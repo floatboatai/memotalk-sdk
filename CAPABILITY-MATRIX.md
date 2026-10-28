@@ -102,7 +102,7 @@
 
 > 错误帧的 `payload`（`frame[4:-2]`，不含 CRC）承载回显内容，`DeviceErrorResponse.echoed` 与之相同（0x04 回显原命令，0x05 回显原参数）。
 
-> ⚠️ **真机上很少见到这种帧**：对非法指令、坏 CRC 等，设备实测都是**不应答**（见 4.3 第 2 条）。调用方处理错误应以 `MemoTalkTimeout` 为主，不能只捕获上表中的异常。
+> **真机上很少见到这种帧**：对非法指令、坏 CRC 等，设备实测都是**不应答**（见 4.3 第 2 条）。调用方处理错误应以 `MemoTalkTimeout` 为主，不能只捕获上表中的异常。
 
 ---
 
@@ -238,16 +238,16 @@ client
 
 | 指令 | 真机状态 | 证据来源 |
 | :-- | :-- | :-- |
-| `0x91` | ✅ 连接握手 | selfcheck L1 |
-| `0x01` `0x09` `0x14` `0x0F` `0x0D` `0x02` `0xB1` `0x13` | ✅ 读指令逐条比对（共 **8** 个码，不是 22 条） | selfcheck L2 |
-| `0x80` | ✅ 录音启停 | selfcheck L3 |
-| `0xA4`（及 `0xA8`/`0x90` 推送） | ✅ 间接验证：切换后分别收到 `0xA8`、`0x90` 流；未断言 `AckResult.success` | selfcheck L3 |
-| `0x84` | ✅ 下载；文件不存在时的失败帧 → `FileNotFoundOnDevice` | selfcheck L3；失败帧仅见复验文字 |
-| `0x92` | ✅ 成功删除；「文件不存在」失败码 | 成功删除：selfcheck L3。失败码：仅手工实验 |
-| `0x87` `0x0B` `0x0C` `0x03`~`0x06` | ✅ 热点开关、凭据读取、`0x03` 回读确认关闭 | selfcheck L4；关闭确认见复验轮次 |
-| `0xB0` | ✅ 仅通过 `raw` 发送，未经 `settings.write` API | selfcheck |
-| `0x9A` | ❌ **从未发给设备**，只验证了本地 `ConfirmationRequired` 拦截（不可逆，拒绝在用户设备上测试） | selfcheck |
-| `0x00` 错误帧 | ⚠️ WARN：发送未定义指令后设备无应答，没有收到错误帧 | selfcheck L2 |
+| `0x91` | 连接握手 | selfcheck L1 |
+| `0x01` `0x09` `0x14` `0x0F` `0x0D` `0x02` `0xB1` `0x13` | 读指令逐条比对（共 **8** 个码，不是 22 条） | selfcheck L2 |
+| `0x80` | 录音启停 | selfcheck L3 |
+| `0xA4`（及 `0xA8`/`0x90` 推送） | 间接验证：切换后分别收到 `0xA8`、`0x90` 流；未断言 `AckResult.success` | selfcheck L3 |
+| `0x84` | 下载；文件不存在时的失败帧 → `FileNotFoundOnDevice` | selfcheck L3；失败帧仅见复验文字 |
+| `0x92` | 成功删除；「文件不存在」失败码 | 成功删除：selfcheck L3。失败码：仅手工实验 |
+| `0x87` `0x0B` `0x0C` `0x03`~`0x06` | 热点开关、凭据读取、`0x03` 回读确认关闭 | selfcheck L4；关闭确认见复验轮次 |
+| `0xB0` | 仅通过 `raw` 发送，未经 `settings.write` API | selfcheck |
+| `0x9A` | **从未发给设备**，只验证了本地 `ConfirmationRequired` 拦截（不可逆，拒绝在用户设备上测试） | selfcheck |
+| `0x00` 错误帧 | WARN：发送未定义指令后设备无应答，没有收到错误帧 | selfcheck L2 |
 
 **明确未验证**：
 - FTP 实际传输：会切断主机网络。凭据读取已验证。
