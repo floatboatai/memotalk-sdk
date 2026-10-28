@@ -19,18 +19,18 @@ Scan, connect, record, stream live audio, download — in ~10 lines.
 
 ---
 
-## ✨ Highlights
+## Highlights
 
-- **🔌 Zero-dependency protocol layer.** `bleak` is only needed when talking to real hardware.
-- **📦 Every reply is a `dataclass`.** No more hand-rolling `pkt[3:-2]` slices — batteries, file lists and settings arrive typed and validated.
-- **🎮 Built-in device simulator.** Develop and test the full stack with no pen in hand.
-- **🧪 154 unit tests, byte-level asserts from real captures.** The parser suite is literally a replay of genuine device traffic.
-- **📡 Live audio & level streaming.** Real-time dB meter or 72 ms MP3 chunks while recording — ready for streaming ASR.
-- **🚀 Wi-Fi fast transfer.** One context manager opens the hotspot, reads FTP credentials and hands you a live FTP session.
+- **Zero-dependency protocol layer.** `bleak` is only needed when talking to real hardware.
+- **Every reply is a `dataclass`.** No more hand-rolling `pkt[3:-2]` slices — batteries, file lists and settings arrive typed and validated.
+- **Built-in device simulator.** Develop and test the full stack with no pen in hand.
+- **154 unit tests, byte-level asserts from real captures.** The parser suite is literally a replay of genuine device traffic.
+- **Live audio & level streaming.** Real-time dB meter or 72 ms MP3 chunks while recording — ready for streaming ASR.
+- **Wi-Fi fast transfer.** One context manager opens the hotspot, reads FTP credentials and hands you a live FTP session.
 
 ---
 
-## 📥 Installation
+## Installation
 
 ```bash
 pip install memotalk-sdk
@@ -46,7 +46,7 @@ pip install -e ".[dev]"
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```python
 import asyncio
@@ -65,7 +65,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### 🎚️ Record + live level meter
+### Record + live level meter
 
 ```python
 async with MemoTalkClient() as dev:
@@ -78,7 +78,7 @@ async with MemoTalkClient() as dev:
     await dev.record.stop()
 ```
 
-### 🗣️ Record + live transcription
+### Record + live transcription
 
 ```python
 async with MemoTalkClient() as dev:
@@ -92,7 +92,7 @@ async with MemoTalkClient() as dev:
     await dev.record.set_realtime(False)
 ```
 
-### 📶 Wi-Fi fast transfer
+### Wi-Fi fast transfer
 
 ```python
 async with MemoTalkClient() as dev:
@@ -109,7 +109,7 @@ async with MemoTalkClient() as dev:
 
 The hotspot is always closed on exit — even on exceptions.
 
-### ⚙️ Settings
+### Settings
 
 ```python
 async with MemoTalkClient() as dev:
@@ -119,7 +119,7 @@ async with MemoTalkClient() as dev:
     await dev.settings.usb_mass_storage(True)
 ```
 
-### 🔧 Escape hatch
+### Escape hatch
 
 ```python
 frame = build_frame(0x77)                        # any protocol code
@@ -128,7 +128,7 @@ reply = await dev.raw.request(frame, code=0x77, timeout=2.0)
 
 ---
 
-## 🗺️ API Map
+## API Map
 
 | Group | Methods |
 | :-- | :-- |
@@ -144,7 +144,7 @@ Full hardware ↔ SDK mapping: [CAPABILITY-MATRIX.md](CAPABILITY-MATRIX.md)
 
 ---
 
-## 💻 CLI
+## CLI
 
 ```bash
 memotalk scan
@@ -163,7 +163,7 @@ memotalk --simulate status
 
 ---
 
-## 🧱 Architecture
+## Architecture
 
 ```
 memotalk/
@@ -186,7 +186,7 @@ memotalk/
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # uv (recommended; pytest lives in the dev extra)
@@ -208,7 +208,7 @@ Every hex literal in `test_parsers.py` comes from real device captures.
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 | Doc | Contents |
 | :-- | :-- |
@@ -221,18 +221,18 @@ Every hex literal in `test_parsers.py` comes from real device captures.
 
 ---
 
-## 🛠️ Migrating from `memotalk-ble-skill`
+## Migrating from `memotalk-ble-skill`
 
 The original SKILL stays put as a **protocol dictionary + reference scripts**; this package is the **installable client** built on top of it. `cmd_*` names were dropped — `cmd_read_battery()` is now `read_battery()`, so migrations are just a prefix away.
 
 ---
 
-## ⭐ Show your support
+## Show your support
 
 If memotalk-sdk saves you an afternoon of BLE reverse-engineering, give it a star — it helps others find it.
 
 ---
 
-## 📄 License
+## License
 
 MIT — Floatboat & MemoTalk. See [LICENSE](LICENSE).

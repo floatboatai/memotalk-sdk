@@ -27,13 +27,13 @@ memotalk-sdk/
 │
 ├── memotalk/                3968  库本体（13 个模块）
 │   ├── __init__.py           156  公开面 re-export（46 个符号）
-│   ├── constants.py          147  ★ 硬件事实：UUID / Cmd / 枚举 / Limits / 帧标记
-│   ├── codec.py              172  ★ CRC16 · 0x5A 组帧 · 帧长推断 · BCD · XOR-FF
-│   ├── commands.py           218  ★ 22 个纯构建函数（路由不在本层）
-│   ├── parsers.py            409  ★ 24 个解析函数 + 8 个帧谓词 + PARSERS 派发表
-│   ├── assemblers.py         253  ★ 3 个状态机：拆包重组 / 0x13 列表 / 0x84 收包
-│   ├── models.py             245  ★ 15 个值对象（13 frozen + 2 可变组合体）
-│   ├── errors.py             154  ★ 16 类异常层级 + 0x00 帧映射
+│   ├── constants.py          147 硬件事实：UUID / Cmd / 枚举 / Limits / 帧标记
+│   ├── codec.py              172 CRC16 · 0x5A 组帧 · 帧长推断 · BCD · XOR-FF
+│   ├── commands.py           218 22 个纯构建函数（路由不在本层）
+│   ├── parsers.py            409 24 个解析函数 + 8 个帧谓词 + PARSERS 派发表
+│   ├── assemblers.py         253 3 个状态机：拆包重组 / 0x13 列表 / 0x84 收包
+│   ├── models.py             245 15 个值对象（13 frozen + 2 可变组合体）
+│   ├── errors.py             154 16 类异常层级 + 0x00 帧映射
 │   ├── transport.py          377  BLE 链路：连接 / 写 / 关联 / 保活 / 断连
 │   ├── discovery.py          141  扫描 + macOS 已连外设找回（私有 API，best-effort）
 │   ├── client.py             875  6 组能力 API + FTP 客户端 + macOS subprocess
