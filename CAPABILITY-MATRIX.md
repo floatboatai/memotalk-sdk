@@ -188,7 +188,7 @@ client
 
 ### 2.3 库替你挡住的错误（对照 `memotalk-ble-skill`）
 
-> 「原 SKILL」指 `memotalk-ble-skill`：一套协议字典加参考脚本（`SKILL.md`、`scripts/ble_core.py` 等），是本库的前身，见 README「与 `memotalk-ble-skill` 的关系」。
+> 「原 SKILL」指 `memotalk-ble-skill`：一套协议字典加参考脚本（`SKILL.md`、`scripts/ble_core.py` 等），是本库的前身。
 
 | 风险 | 原 SKILL | 本库 |
 | :-- | :-- | :-- |

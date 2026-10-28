@@ -232,14 +232,6 @@ python -m unittest discover -s tests -v
 
 ---
 
-## 与 `memotalk-ble-skill` 的关系
-
-原 SKILL 是**协议字典 + 参考脚本**，本库是**可安装的客户端**。原 SKILL 目录未作改动，仍可用于协议查阅。
-
-原脚本里的 `cmd_read_battery()` 这类 `cmd_*` 命名已移除，统一改为 `read_battery()`、`read_record_state()` 等动词开头的名字；迁移时把 `cmd_` 前缀去掉即可。
-
----
-
 ## 许可
 
 MIT，版权人 Floatboat 与 MemoTalk。见 [LICENSE](LICENSE)。
