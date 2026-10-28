@@ -1,0 +1,11 @@
+name: PD
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hi
