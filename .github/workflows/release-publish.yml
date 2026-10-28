@@ -25,6 +25,13 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/memotalk-sdk
+    env:
+      # The `secrets` context is NOT available inside step-level `if:`
+      # expressions — GitHub's parser rejects the whole workflow file when it
+      # appears there, registers the file as invalid, and then fires a
+      # guaranteed-to-fail run on every push. Resolve it once here, where
+      # `secrets` IS allowed, and branch the steps on `env` instead.
+      PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -45,10 +52,8 @@ jobs:
             exit 1
           fi
 
-      # Only one upload step runs. Each condition is written positively:
-      # a leading "!" or "!=" inside an expression makes the whole workflow
-      # file fail to parse, and GitHub then registers it under its file path
-      # and fires it on every push.
+      # Exactly one upload step runs. Never reference `secrets` inside a
+      # step-level `if:` — see the env block above.
 
       - name: Upload to TestPyPI
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
@@ -60,7 +65,7 @@ jobs:
           verbose: true
 
       - name: Upload to PyPI (trusted publishing)
-        if: ${{ github.event_name == 'release' && secrets.PYPI_API_TOKEN == '' }}
+        if: ${{ github.event_name == 'release' && env.PYPI_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
@@ -68,7 +73,7 @@ jobs:
           verbose: true
 
       - name: Upload to PyPI (trusted publishing, manual)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false && env.PYPI_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
@@ -76,19 +81,19 @@ jobs:
           verbose: true
 
       - name: Upload to PyPI (API token)
-        if: ${{ github.event_name == 'release' && secrets.PYPI_API_TOKEN != '' }}
+        if: ${{ github.event_name == 'release' && env.PYPI_TOKEN != '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
           packages-dir: dist/
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          password: ${{ env.PYPI_TOKEN }}
           verbose: true
 
       - name: Upload to PyPI (API token, manual)
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false && secrets.PYPI_API_TOKEN != '' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false && env.PYPI_TOKEN != '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
           packages-dir: dist/
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          password: ${{ env.PYPI_TOKEN }}
           verbose: true
