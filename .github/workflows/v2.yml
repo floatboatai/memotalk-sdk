@@ -1,0 +1,13 @@
+name: V2
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - name: a
+        if: ${{ github.event_name == 'release' && secrets.FOO == 'x' }}
+        run: echo hi

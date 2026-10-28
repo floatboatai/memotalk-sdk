@@ -1,10 +1,13 @@
-name: U1
+name: V3
 on:
   workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
 jobs:
   p:
     runs-on: ubuntu-latest
     steps:
       - name: a
-        if: ${{ secrets.FOO == '' }}
+        if: ${{ github.event_name == 'release' }}
         run: echo hi
