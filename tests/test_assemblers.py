@@ -5,7 +5,6 @@ from __future__ import annotations
 import unittest
 
 from memotalk.assemblers import AudioSyncAssembler, FileListAssembler, FrameReassembler
-from memotalk.codec import build_frame
 from memotalk.constants import SYNC_PACKET_TOTAL
 from memotalk.errors import ProtocolError
 from memotalk.fake import build_file_list_frames, build_sync_ack, build_sync_packet, make_file_entry

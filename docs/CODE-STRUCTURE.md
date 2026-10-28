@@ -29,7 +29,7 @@ memotalk-sdk/
 │   ├── __init__.py           156  公开面 re-export（46 个符号）
 │   ├── constants.py          147  ★ 硬件事实：UUID / Cmd / 枚举 / Limits / 帧标记
 │   ├── codec.py              172  ★ CRC16 · 0x5A 组帧 · 帧长推断 · BCD · XOR-FF
-│   ├── commands.py           277  ★ 22 个纯构建函数 + 通道路由表 + 22 行兼容别名
+│   ├── commands.py           218  ★ 22 个纯构建函数（路由不在本层）
 │   ├── parsers.py            409  ★ 24 个解析函数 + 8 个帧谓词 + PARSERS 派发表
 │   ├── assemblers.py         253  ★ 3 个状态机：拆包重组 / 0x13 列表 / 0x84 收包
 │   ├── models.py             245  ★ 15 个值对象（13 frozen + 2 可变组合体）
@@ -87,7 +87,7 @@ memotalk-sdk/
    client.RecordController.start()
      → commands.control_recording(RecAction.START)     纯函数，返回 bytes
      → codec.build_frame(0x80, [01])                   5A 03 80 01 CRC16
-     → WRITE_CHANNEL[0x80] = Channel.RECORD            ← 全协议唯一路由例外
+     → client._call(write=Channel.RECORD)              ← 全协议唯一路由例外
      → transport.write(FFE1, frame)                    write-without-response
 
 ② 应答读取
@@ -155,7 +155,7 @@ Python 现有文件名已经满足（`codec.py` / `transport.py` / `client.py` /
 | 知识 | 当前位置 |
 | :-- | :-- |
 | 码值 | `constants.py:43-68` |
-| 写通道 / 听通道 | `commands.py:69-99` |
+| 写通道 / 听通道 | `client.py` 各调用点硬编码 `write=` / `listen=` |
 | 解析函数 + 最小长度 | `parsers.py:83-398` |
 | 人类可读说明 | `CAPABILITY-MATRIX.md:42-...` |
 
@@ -207,11 +207,11 @@ vectors/
 
 | # | 问题 | 证据 | 为什么挡住四语言 |
 | :-: | :-- | :-- | :-- |
-| 1 | 协议表写四处 | `constants.py:43` / `commands.py:69` / `parsers.py:376` / `CAPABILITY-MATRIX.md:42` | 乘 4 语言 = 16 处同步点 |
+| 1 | 协议表写四处 | `constants.py:43` / `client.py` 路由点 / `parsers.py:376` / `CAPABILITY-MATRIX.md:42` | 乘 4 语言 = 16 处同步点 |
 | 2 | transport 既是接口又是实现 | `transport.py:102` 被 `fake.py:394` 继承 | 三种 BLE 栈没有可对标的抽象契约 |
 | 3 | `client.py` 875 行混三件事 | 能力 API 190-595 · FTP 599-680 · macOS `subprocess` 653-680 | 平台代码长在协议库最顶层，非 Python 实现无法切分 |
 | 4 | `_bcd_to_datetime` 跨模块私有导入 | `parsers.py:36` ↔ `models.py:23` | Kotlin/TS 严格可见性下直接编译失败 |
-| 5 | 22 行纯别名 `cmd_*` | `commands.py:256-277` | 纯历史包袱，四语言各抄一遍是 88 行噪音 |
+| 5 | ~~22 行纯别名 `cmd_*`~~ **已删除**（2026-10-22） | 原 `commands.py:256-277` | 纯历史包袱，四语言各抄一遍是 88 行噪音 |
 | 6 | ~~命名三套~~ **已统一为 `memotalk-sdk`**（2026-10-22） | `pyproject.toml:6` · `README.md:1` · `cli.py:235` | 制品名已统一；命名空间 `memotalk` 按规则保留，见 §5.1 |
 | 7 | 无 `.git` / 无 `.gitignore` / 无 `LICENSE`，`__pycache__` 与 `.egg-info` 留在目录里 | 目录实测 | 多语言单仓的前置条件；`egg-info` 是构建残留，不该进库 |
 
@@ -313,7 +313,7 @@ memotalk-sdk/                       ← 仓库名收敛为一个（决策点 1�
 | :-- | :-- | :-: | :-- |
 | `constants.py` | `core/` | A | 由 `spec/protocol.yaml` 生成 |
 | `codec.py` | `core/` | A | 手工移植，vectors 校验 |
-| `commands.py` | `core/` | A | 手工移植，删 22 行别名 |
+| `commands.py` | `core/` | A | 手工移植，22 个构建函数一一对应可发码 |
 | `parsers.py` | `core/` | A | 手工移植，vectors 校验 |
 | `assemblers.py` | `core/` | A | 手工移植，状态机逐用例校验 |
 | `models.py` | `core/` | A | 各语言原生值类型（dataclass / interface / data class） |

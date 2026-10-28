@@ -1,8 +1,10 @@
 """Command builders - one function per hardware atom.
 
-Every builder is pure: it returns the bytes to write and nothing else. Channel
-routing is declared here as data (`WRITE_CHANNEL` / `RESPONSE_CHANNEL`) so the
-transport and the client can never disagree about where a frame goes.
+Every builder is pure: it returns the bytes to write and nothing else. It does
+not know which channel the frame has to go to - routing lives one layer up, in
+``client.py``, which passes ``write=``/``listen=`` explicitly at every call
+site. 0x80 is written to FFE1 and answered on FFE2; 0x02 is written to FFF1
+and answered on FFE2; everything else goes to FFF1 and is answered on FFF2.
 """
 
 from __future__ import annotations
@@ -12,11 +14,9 @@ import struct
 from typing import Optional
 
 from .codec import bcd_bytes, build_frame
-from .constants import Channel, Cmd, Limits, RecAction, SettingType, SyncOp
+from .constants import Cmd, Limits, RecAction, SettingType, SyncOp
 
 __all__ = [
-    "WRITE_CHANNEL",
-    "RESPONSE_CHANNEL",
     "read_battery",
     "read_record_state",
     "read_ftp_host",
@@ -39,65 +39,7 @@ __all__ = [
     "clear_all_files",
     "set_realtime_asr",
     "write_setting",
-    # aliases matching the original skill SDK names
-    "cmd_read_battery",
-    "cmd_read_record_state",
-    "cmd_read_ftp_host",
-    "cmd_read_ftp_port",
-    "cmd_read_ftp_user",
-    "cmd_read_ftp_password",
-    "cmd_read_firmware_version",
-    "cmd_read_wifi_ssid",
-    "cmd_read_wifi_password",
-    "cmd_read_has_import_file",
-    "cmd_read_free_space",
-    "cmd_query_file_list",
-    "cmd_read_device_sn_and_format",
-    "cmd_read_setting",
-    "cmd_sync_rtc_time",
-    "cmd_control_recording",
-    "cmd_sync_audio_file",
-    "cmd_set_wifi_ap",
-    "cmd_delete_file",
-    "cmd_clear_all_files",
-    "cmd_set_realtime_asr",
-    "cmd_write_setting",
 ]
-
-# Which characteristic each command must be written to. 0x80 is the sole
-# exception and it is the single most common integration bug.
-WRITE_CHANNEL = {
-    Cmd.BATTERY: Channel.CONTROL,
-    Cmd.RECORD_STATE: Channel.CONTROL,
-    Cmd.FTP_HOST: Channel.CONTROL,
-    Cmd.FTP_PORT: Channel.CONTROL,
-    Cmd.FTP_USER: Channel.CONTROL,
-    Cmd.FTP_PASSWORD: Channel.CONTROL,
-    Cmd.FIRMWARE: Channel.CONTROL,
-    Cmd.WIFI_SSID: Channel.CONTROL,
-    Cmd.WIFI_PASSWORD: Channel.CONTROL,
-    Cmd.HAS_IMPORT_FILE: Channel.CONTROL,
-    Cmd.FREE_SPACE: Channel.CONTROL,
-    Cmd.FILE_LIST: Channel.CONTROL,
-    Cmd.DEVICE_SN: Channel.CONTROL,
-    Cmd.SETTING_READ: Channel.CONTROL,
-    Cmd.RTC_SYNC: Channel.CONTROL,
-    Cmd.FILE_SYNC: Channel.CONTROL,
-    Cmd.WIFI_AP: Channel.CONTROL,
-    Cmd.DELETE_FILE: Channel.CONTROL,
-    Cmd.CLEAR_ALL: Channel.CONTROL,
-    Cmd.REALTIME_ASR: Channel.CONTROL,
-    Cmd.SETTING_WRITE: Channel.CONTROL,
-    Cmd.RECORD_CONTROL: Channel.RECORD,
-}
-
-# Where the answer arrives. 0x02 and 0x80 answer on FFE2 even though 0x02 is
-# written to FFF1 - the one asymmetric route in the protocol.
-RESPONSE_CHANNEL = {
-    Cmd.RECORD_STATE: Channel.RECORD,
-    Cmd.RECORD_CONTROL: Channel.RECORD,
-}
-
 
 # --- reads ------------------------------------------------------------------
 def read_battery() -> bytes:
@@ -250,28 +192,3 @@ def write_setting(setting_type: SettingType, value: int) -> bytes:
             raise ValueError("usb mass storage must be 0 (off) or 1 (on)")
         return build_frame(Cmd.SETTING_WRITE, bytes([0x02, value]))
     raise ValueError(f"unsupported setting type: 0x{int(st):02X}")
-
-
-# --- backward compatible aliases (same names as the original skill) ---------
-cmd_read_battery = read_battery
-cmd_read_record_state = read_record_state
-cmd_read_ftp_host = read_ftp_host
-cmd_read_ftp_port = read_ftp_port
-cmd_read_ftp_user = read_ftp_user
-cmd_read_ftp_password = read_ftp_password
-cmd_read_firmware_version = read_firmware_version
-cmd_read_wifi_ssid = read_wifi_ssid
-cmd_read_wifi_password = read_wifi_password
-cmd_read_has_import_file = read_has_import_file
-cmd_read_free_space = read_free_space
-cmd_query_file_list = query_file_list
-cmd_read_device_sn_and_format = read_device_sn
-cmd_read_setting = read_setting
-cmd_sync_rtc_time = sync_rtc
-cmd_control_recording = control_recording
-cmd_sync_audio_file = sync_audio_file
-cmd_set_wifi_ap = set_wifi_ap
-cmd_delete_file = delete_file
-cmd_clear_all_files = clear_all_files
-cmd_set_realtime_asr = set_realtime_asr
-cmd_write_setting = write_setting

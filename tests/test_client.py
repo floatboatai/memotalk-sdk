@@ -10,11 +10,10 @@ import asyncio
 import contextlib
 import tempfile
 import unittest
-from pathlib import Path
 
 from memotalk import MemoTalkClient
 from memotalk.codec import build_frame
-from memotalk.constants import Cmd, RecordStateCode, SettingType
+from memotalk.constants import Channel, Cmd, RecordStateCode, SettingType
 from memotalk.errors import (
     ConfirmationRequired,
     ConnectionLost,
@@ -386,6 +385,50 @@ class DownloadSilenceTests(ClientTestCase):
         with tempfile.TemporaryDirectory() as tmp:
             path = await self.client.files.download(entry, tmp)
             self.assertEqual(path.read_bytes(), self.device._file_bytes(entry))
+
+
+class RoutingTests(ClientTestCase):
+    """Routing is hardcoded per call site, so pin it down with a test.
+
+    0x80 is the only command written to FFE1. 0x02 is written to FFF1 but
+    answered on FFE2. Everything else goes to FFF1.
+    """
+
+    async def asyncSetUp(self):
+        await super().asyncSetUp()
+        self.device.writes.clear()
+
+    def _write_channel_of(self, code):
+        for channel, frame in self.device.writes:
+            if len(frame) > 2 and frame[2] == code:
+                return channel
+        return None
+
+    async def test_ordinary_commands_go_to_the_control_channel(self):
+        await self.client.battery()
+        await self.client.firmware()
+        await self.client.identity()
+        await self.client.free_space()
+        await self.client.has_import_file()
+        await self.client.files.list()
+        await self.client.sync_time()
+        await self.client.settings.read(SettingType.SLEEP_TIMEOUT_SEC)
+        for code in (0x01, 0x09, 0x14, 0x0F, 0x0D, 0x13, 0x91, 0xB1):
+            self.assertEqual(self._write_channel_of(code), Channel.CONTROL, hex(code))
+
+    async def test_record_control_goes_to_the_record_channel(self):
+        await self.client.record.start()
+        await self.client.record.stop()
+        self.assertEqual(self._write_channel_of(0x80), Channel.RECORD)
+
+    async def test_record_state_is_written_to_control(self):
+        """0x02 crosses services: FFF1 out, FFE2 in."""
+        await self.client.record.state()
+        self.assertEqual(self._write_channel_of(0x02), Channel.CONTROL)
+
+    async def test_file_sync_control_goes_to_control_even_though_data_arrives_on_record(self):
+        await self.client.files.list()
+        self.assertEqual(self._write_channel_of(0x84), None)  # no transfer started
 
 
 if __name__ == "__main__":

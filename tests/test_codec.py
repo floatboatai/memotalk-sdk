@@ -22,7 +22,6 @@ from memotalk.codec import (
     xor_ff_encode,
 )
 from memotalk.constants import Cmd, RecAction, SettingType, SyncOp
-from memotalk.errors import CrcError, ProtocolError
 
 
 class CrcTests(unittest.TestCase):

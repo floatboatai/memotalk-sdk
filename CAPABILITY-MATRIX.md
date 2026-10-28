@@ -192,7 +192,7 @@ client
 
 | 风险 | 原 SKILL | 本库 |
 | :-- | :-- | :-- |
-| 写错通道 | 只写在文档里 | 每个 client 方法硬编码 `write=` 通道（`WRITE_CHANNEL` 表仅作对照文档，路由不读它）；只有 `raw` 能写到任意通道 |
+| 写错通道 | 只写在文档里 | 每个 client 方法硬编码 `write=` 通道（路由不查表，唯一的写通道例外是 0x80→FFE1）；只有 `raw` 能写到任意通道 |
 | `0x02` 听错通道 | 手工 `ffe2_q.get()` | `Channel.CONTROL` 写 / `Channel.RECORD` 听，显式传参 |
 | 丢包 | 无处理，超时即失败 | 自动算 `missing_sequences()` 并续传 |
 | 低 MTU 拆包 | 文档提示"自行拼接" | `FrameReassembler` 按三种帧长自动粘合 |
@@ -234,7 +234,7 @@ client
 
 ### 4.2 真实 BLE 硬件（2026-10-22，`tools/selfcheck.py` + 手工实验）
 
-明细见 [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md)。注意该报告的汇总计数与 `docs/reg_*.json` 原始输出不一致（例如 L2 报告写 15 PASS，JSON 为 19 PASS），且复验轮次（含 1 次 FAIL）没有对应的 JSON，计数以 JSON 和复验文字为准。结论：**大部分通过，有 WARN，且有未覆盖项**，不能视为「全部通过」。
+明细见 [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md)。三个 `docs/reg_*.json` 原始输出合计 **39 PASS / 2 WARN / 0 FAIL**；报告正文表格已按此校正，但复验轮次（含 1 次 FAIL）没有对应的 JSON，计数以 JSON 和复验文字为准。结论：**大部分通过，有 WARN，且有未覆盖项**，不能视为「全部通过」。
 
 | 指令 | 真机状态 | 证据来源 |
 | :-- | :-- | :-- |

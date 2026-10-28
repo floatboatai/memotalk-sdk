@@ -29,7 +29,6 @@ from __future__ import annotations
 from .assemblers import AudioSyncAssembler, FileListAssembler, FrameReassembler
 from .client import MemoTalkClient, NetworkSession
 from .codec import build_frame, crc16, verify_crc, xor_ff_decode, xor_ff_encode
-from .commands import WRITE_CHANNEL
 from .constants import (
     AUDIO_STREAM_TOTAL,
     SERVICE_UUIDS,
@@ -102,7 +101,6 @@ __all__ = [
     "xor_ff_decode",
     "xor_ff_encode",
     "parse_response",
-    "WRITE_CHANNEL",
     # assemblers
     "FrameReassembler",
     "FileListAssembler",
