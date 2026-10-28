@@ -45,6 +45,11 @@ jobs:
             exit 1
           fi
 
+      # Only one upload step runs. Each condition is written positively:
+      # a leading "!" or "!=" inside an expression makes the whole workflow
+      # file fail to parse, and GitHub then registers it under its file path
+      # and fires it on every push.
+
       - name: Upload to TestPyPI
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -54,16 +59,33 @@ jobs:
           skip-existing: true
           verbose: true
 
-      - name: Upload to PyPI
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) && secrets.PYPI_API_TOKEN == '' }}
+      - name: Upload to PyPI (trusted publishing)
+        if: ${{ github.event_name == 'release' && secrets.PYPI_API_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
           packages-dir: dist/
           verbose: true
 
-      - name: Upload to PyPI with a token
-        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) && secrets.PYPI_API_TOKEN != '' }}
+      - name: Upload to PyPI (trusted publishing, manual)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://upload.pypi.org/legacy/
+          packages-dir: dist/
+          verbose: true
+
+      - name: Upload to PyPI (API token)
+        if: ${{ github.event_name == 'release' && secrets.PYPI_API_TOKEN != '' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://upload.pypi.org/legacy/
+          packages-dir: dist/
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          verbose: true
+
+      - name: Upload to PyPI (API token, manual)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == false && secrets.PYPI_API_TOKEN != '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/

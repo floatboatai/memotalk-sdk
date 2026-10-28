@@ -1,9 +1,0 @@
-name: R1
-on:
-  workflow_dispatch:
-jobs:
-  p:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo hi
-
