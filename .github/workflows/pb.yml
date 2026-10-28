@@ -1,9 +1,0 @@
-name: PB
-on:
-  release:
-    types: [published]
-jobs:
-  p:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo hi

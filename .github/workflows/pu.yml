@@ -1,9 +1,0 @@
-name: PU
-on:
-  workflow_dispatch:
-jobs:
-  p:
-    runs-on: ubuntu-latest
-    steps:
-      - name: a
-        run: echo hi
