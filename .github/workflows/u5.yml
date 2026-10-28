@@ -1,0 +1,10 @@
+name: U5
+on:
+  workflow_dispatch:
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - name: a
+        if: ${{ github.event_name == 'release' }}
+        run: echo hi
