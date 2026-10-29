@@ -208,6 +208,14 @@ python -m unittest discover -s tests -v
 
 ---
 
+## REC02 单台成本明细
+
+![Memotalk REC02 单台成本明细](docs/assets/rec02-unit-cost-zh.png)
+
+[查看完整成本明细](docs/REC02-COST.zh-CN.md)
+
+---
+
 ## 文档
 
 | 文档 | 内容 |

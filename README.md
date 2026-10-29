@@ -208,6 +208,14 @@ Every hex literal in `test_parsers.py` comes from real device captures.
 
 ---
 
+## REC02 cost breakdown
+
+![Memotalk REC02 per-unit cost breakdown](docs/assets/rec02-unit-cost-en.png)
+
+[View the full cost breakdown](docs/REC02-COST.md)
+
+---
+
 ## Documentation
 
 | Doc | Contents |
