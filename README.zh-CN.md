@@ -218,6 +218,7 @@ python -m unittest discover -s tests -v
 | [docs/ERRATA.md](docs/ERRATA.md) | 协议文档的缺陷与真机实测发现 |
 | [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md) | 真机回归明细与原始 JSON |
 | [docs/RELEASING.md](docs/RELEASING.md) | 发布到 PyPI 的流程 |
+| [REC02 单台成本明细](docs/REC02-COST.zh-CN.md) | 硬件、制造、研发、服务与履约成本，含中英文说明图 |
 
 ---
 

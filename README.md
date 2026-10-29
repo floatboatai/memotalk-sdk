@@ -218,6 +218,7 @@ Every hex literal in `test_parsers.py` comes from real device captures.
 | [docs/ERRATA.md](docs/ERRATA.md) | Protocol doc quirks & real-hardware findings |
 | [docs/HARDWARE-REGRESSION.md](docs/HARDWARE-REGRESSION.md) | Hardware regression details & raw JSON |
 | [docs/RELEASING.md](docs/RELEASING.md) | PyPI release process |
+| [REC02 cost breakdown](docs/REC02-COST.md) | Per-unit hardware, manufacturing, development, service and fulfillment costs, with English and Chinese infographics |
 
 ---
 
